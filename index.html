@@ -20,6 +20,9 @@
             background-color: #F5E3FF; /* Light Purple-Pink */
             color: #000000; /* Industrial Black */
             letter-spacing: 0.025em;
+            /* Added subtle diagonal line pattern */
+            background-image: linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.04) 75%, transparent 75%, transparent);
+            background-size: 30px 30px;
         }
         .brutal-shadow {
             /* A harsher, more significant shadow */
@@ -39,18 +42,23 @@
         .transition-transform {
             transition: transform 0.2s ease-in-out;
         }
+        /* Confetti Canvas Styling */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* Place it behind everything */
+            pointer-events: none; /* Make sure it's not clickable */
+        }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen px-4 py-8">
+<body class="flex items-center justify-center min-h-screen px-4 py-8 md:py-12">
 
-    <!-- 
-        ===============================================================
-        Responsive Layout:
-        - Mobile (default): Single column, text on top (flex-col).
-        - Desktop (md and up): Two columns, image on left (md:flex-row).
-        - Order classes are used to flip the visual order on desktop.
-        ===============================================================
-    -->
+    <!-- Visual Elements: Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center">
         
         <!-- Text Content Wrapper -->
@@ -59,7 +67,11 @@
             <header class="mb-6 transform -rotate-2 transition-transform hover:scale-105">
                 <div class="bg-white py-3 px-4 border-8 border-black brutal-shadow">
                     <h2 class="text-xl sm:text-2xl leading-tight">החתונה של</h2>
-                    <h1 class="text-4xl sm:text-5xl text-black my-1">מוטי & ברוכי</h1>
+                    <h1 class="text-4xl sm:text-5xl text-black my-1 flex items-center justify-center">
+                        מוטי 
+                        <span class="mx-2 text-5xl">&</span>
+                        ברוכי
+                    </h1>
                     <p class="text-md sm:text-lg mt-2 tracking-widest">בעוד:</p>
                 </div>
             </header>
@@ -105,10 +117,8 @@
     <script>
         // Use window.onload to ensure EVERYTHING is loaded
         window.onload = function() {
-            // Set the date and time we're counting down to (the chuppah)
+            // --- Countdown Logic ---
             const countdownDate = new Date("2025-10-22T18:00:00").getTime();
-
-            // Get elements to update
             const daysEl = document.getElementById('days');
             const hoursEl = document.getElementById('hours');
             const minutesEl = document.getElementById('minutes');
@@ -116,38 +126,97 @@
             const countdownContainer = document.getElementById('countdown-container');
             const footerMessage = document.getElementById('footer-message');
             
-            // Defensive check: only run if all elements exist
-            if (!daysEl || !hoursEl || !minutesEl || !secondsEl || !countdownContainer) {
-                console.error("Countdown elements could not be found. Aborting.");
-                return;
+            if (daysEl && hoursEl && minutesEl && secondsEl && countdownContainer) {
+                const interval = setInterval(() => {
+                    const now = new Date().getTime();
+                    const distance = countdownDate - now;
+
+                    if (distance < 0) {
+                        clearInterval(interval);
+                        countdownContainer.innerHTML = `<div class="col-span-2 bg-white p-6 border-8 border-black brutal-shadow"><h2 class="text-4xl text-[#FF0000]">החופה החלה.</h2></div>`;
+                        if (footerMessage) footerMessage.innerHTML = '<p class="text-xl font-bold bg-black text-white inline-block p-4">מזל טוב!</p>';
+                        return;
+                    }
+
+                    daysEl.innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                    hoursEl.innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                    minutesEl.innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                    secondsEl.innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                }, 1000);
             }
 
-            // Update the countdown every 1 second
-            const interval = setInterval(() => {
-                const now = new Date().getTime();
-                const distance = countdownDate - now;
+            // --- Geometric Confetti Logic ---
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
-                if (distance < 0) {
-                    clearInterval(interval);
-                    countdownContainer.innerHTML = `<div class="col-span-2 bg-white p-6 border-8 border-black brutal-shadow">
-                                                        <h2 class="text-4xl text-[#FF0000]">החופה החלה.</h2>
-                                                    </div>`;
-                    if (footerMessage) {
-                       footerMessage.innerHTML = '<p class="text-xl font-bold bg-black text-white inline-block p-4">מזל טוב!</p>';
-                    }
-                    return;
+            let particles = [];
+            const particleCount = 50;
+            const colors = ["rgba(0,0,0,0.3)", "rgba(0,0,0,0.5)"];
+
+            function Particle(x, y, size, shape, color, speed) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.shape = shape;
+                this.color = color;
+                this.speed = speed;
+                this.rotation = Math.random() * 360;
+            }
+
+            Particle.prototype.draw = function() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                if (this.shape === 'square') {
+                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                } else { // line
+                    ctx.fillRect(-this.size / 2, -1, this.size, 2);
                 }
+                ctx.restore();
+            };
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            Particle.prototype.update = function() {
+                this.y += this.speed;
+                this.rotation += this.speed / 2;
+                if (this.y > canvas.height) {
+                    this.y = -this.size;
+                    this.x = Math.random() * canvas.width;
+                }
+            };
 
-                daysEl.innerText = String(days).padStart(2, '0');
-                hoursEl.innerText = String(hours).padStart(2, '0');
-                minutesEl.innerText = String(minutes).padStart(2, '0');
-                secondsEl.innerText = String(seconds).padStart(2, '0');
-            }, 1000);
+            function initParticles() {
+                for (let i = 0; i < particleCount; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const size = Math.random() * 15 + 5;
+                    const shape = Math.random() > 0.5 ? 'square' : 'line';
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const speed = Math.random() * 1 + 0.2;
+                    particles.push(new Particle(x, y, size, shape, color, speed));
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animate);
+            }
+
+            initParticles();
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                particles = [];
+                initParticles();
+            });
         };
     </script>
 
