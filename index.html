@@ -8,105 +8,122 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Anton for a bold, aggressive, high-impact look -->
+    <!-- Google Fonts: Anton -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* All text uses the Anton font for maximum impact */
         body {
             font-family: 'Anton', sans-serif;
-            background-color: #F5E3FF; /* Light Purple-Pink */
-            color: #000000; /* Industrial Black */
+            background-color: #F5E3FF;
+            color: #000000;
             letter-spacing: 0.025em;
-            /* Added subtle diagonal line pattern */
             background-image: linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.04) 75%, transparent 75%, transparent);
             background-size: 30px 30px;
         }
-        .brutal-shadow {
-            /* A harsher, more significant shadow */
-            box-shadow: 8px 8px 0px #000000;
+        .brutal-shadow { box-shadow: 8px 8px 0px #000000; }
+        .countdown-number { font-weight: 400; color: #FF0000; line-height: 1; text-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+        .label-text { letter-spacing: 0.05em; }
+        .transition-transform { transition: transform 0.2s ease-in-out; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; }
+        
+        @keyframes pop { 50% { transform: scale(1.2); } }
+        .animate-pop { animation: pop 0.4s ease-in-out; }
+
+        /* === STABILIZED FLIP ANIMATION STYLES === */
+        .header-wrapper {
+            perspective: 1000px;
+            min-height: 150px; 
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .countdown-number {
-            font-weight: 400; /* Anton is bold by default */
-            color: #FF0000; /* Alarm Red */
-            line-height: 1;
-            /* A subtle text shadow to lift the numbers off the background */
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        .header-flipper {
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transform-style: preserve-3d;
+            position: relative;
+            width: 100%;
+            height: 100%;
         }
-        .label-text {
-             letter-spacing: 0.05em; /* Add some spacing to the labels */
+        .header-flipper.is-flipped {
+            transform: rotateY(180deg);
         }
-        /* Add a transition to all transformed elements for smoother interaction */
-        .transition-transform {
-            transition: transform 0.2s ease-in-out;
-        }
-        /* Confetti Canvas Styling */
-        #confetti-canvas {
-            position: fixed;
+        .header-front, .header-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1; /* Place it behind everything */
-            pointer-events: none; /* Make sure it's not clickable */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-back {
+            transform: rotateY(180deg);
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen px-4 py-8 md:py-12">
 
-    <!-- Visual Elements: Confetti Canvas -->
     <canvas id="confetti-canvas"></canvas>
 
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center">
         
-        <!-- Text Content Wrapper -->
         <div class="text-center flex flex-col items-center justify-between order-1 md:order-2 w-full">
-            <!-- Main Header -->
-            <header class="mb-6 transform -rotate-2 transition-transform hover:scale-105">
-                <div class="bg-white py-3 px-4 border-8 border-black brutal-shadow">
-                    <h2 class="text-xl sm:text-2xl leading-tight">החתונה של</h2>
-                    <h1 class="text-4xl sm:text-5xl text-black my-1 flex items-center justify-center">
-                        מוטי 
-                        <span class="mx-2 text-5xl">&</span>
-                        ברוכי
-                    </h1>
-                    <p class="text-md sm:text-lg mt-2 tracking-widest">בעוד:</p>
+            <!-- HEADER FLIPPER WRAPPER -->
+            <div class="header-wrapper mb-6 transform -rotate-2 hover:scale-105">
+                <div id="header-flipper" class="header-flipper">
+                    <!-- Front (Regular Content) -->
+                    <div class="header-front">
+                        <div class="bg-white py-3 px-4 border-8 border-black brutal-shadow">
+                            <h2 class="text-xl sm:text-2xl leading-tight">החתונה של</h2>
+                            <h1 class="text-4xl sm:text-5xl text-black my-1 flex items-center justify-center">
+                                מוטי <span class="mx-2 text-5xl">&</span> ברוכי
+                            </h1>
+                            <p class="text-md sm:text-lg mt-2 tracking-widest">בעוד:</p>
+                        </div>
+                    </div>
+                    <!-- Back (Welcome Message) -->
+                    <div class="header-back">
+                         <div class="bg-white py-3 px-4 border-8 border-black brutal-shadow">
+                            <!-- FIX: Corrected RTL text direction -->
+                            <h1 class="text-5xl sm:text-6xl text-black my-4 px-8">מזל טוב!</h1>
+                        </div>
+                    </div>
                 </div>
-            </header>
+            </div>
 
-            <!-- Countdown Timer Section -->
             <main id="countdown-container" class="grid grid-cols-2 gap-4 mb-6 w-full max-w-xs">
-                <!-- Days -->
-                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-2 hover:scale-110 transition-transform">
+                <div id="days-box" class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-2 hover:scale-110 transition-transform">
                     <div id="days" class="text-4xl sm:text-5xl countdown-number">00</div>
                     <div class="text-sm sm:text-base font-bold mt-1 label-text">ימים</div>
                 </div>
-                <!-- Hours -->
-                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform -rotate-2 hover:scale-110 transition-transform">
+                <div id="hours-box" class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform -rotate-2 hover:scale-110 transition-transform">
                     <div id="hours" class="text-4xl sm:text-5xl countdown-number">00</div>
                     <div class="text-sm sm:text-base font-bold mt-1 label-text">שעות</div>
                 </div>
-                <!-- Minutes -->
-                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-1 hover:scale-110 transition-transform">
+                <div id="minutes-box" class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-1 hover:scale-110 transition-transform">
                     <div id="minutes" class="text-4xl sm:text-5xl countdown-number">00</div>
                     <div class="text-sm sm:text-base font-bold mt-1 label-text">דקות</div>
                 </div>
-                <!-- Seconds -->
-                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform -rotate-1 hover:scale-110 transition-transform">
+                <div id="seconds-box" class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform -rotate-1 hover:scale-110 transition-transform">
                     <div id="seconds" class="text-4xl sm:text-5xl countdown-number">00</div>
                     <div class="text-sm sm:text-base font-bold mt-1 label-text">שניות</div>
                 </div>
             </main>
             
-            <!-- Wedding Date Footer -->
             <footer id="footer-message" class="transform transition-transform hover:scale-105 rotate-1">
                  <p class="text-base sm:text-lg font-bold bg-black text-white inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p>
             </footer>
         </div>
 
-        <!-- The Photo Element Wrapper -->
         <div class="w-full max-w-sm order-2 md:order-1">
             <div class="bg-white p-3 pb-12 relative border-4 border-black brutal-shadow transform rotate-3 hover:scale-105 hover:rotate-2 transition-transform">
                 <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
@@ -115,18 +132,25 @@
     </div>
 
     <script>
-        // Use window.onload to ensure EVERYTHING is loaded
         window.onload = function() {
-            // --- Countdown Logic ---
-            const countdownDate = new Date("2025-10-22T18:00:00").getTime();
-            const daysEl = document.getElementById('days');
-            const hoursEl = document.getElementById('hours');
-            const minutesEl = document.getElementById('minutes');
-            const secondsEl = document.getElementById('seconds');
-            const countdownContainer = document.getElementById('countdown-container');
-            const footerMessage = document.getElementById('footer-message');
-            
-            if (daysEl && hoursEl && minutesEl && secondsEl && countdownContainer) {
+            const flipper = document.getElementById('header-flipper');
+
+            function startCountdown() {
+                const countdownDate = new Date("2025-10-22T18:00:00").getTime();
+                const daysEl = document.getElementById('days');
+                const hoursEl = document.getElementById('hours');
+                const minutesEl = document.getElementById('minutes');
+                const secondsEl = document.getElementById('seconds');
+                const daysBox = document.getElementById('days-box');
+                const hoursBox = document.getElementById('hours-box');
+                const minutesBox = document.getElementById('minutes-box');
+                const secondsBox = document.getElementById('seconds-box');
+                const countdownContainer = document.getElementById('countdown-container');
+                const footerMessage = document.getElementById('footer-message');
+                let prevDays, prevHours, prevMinutes, prevSeconds;
+
+                if (!daysEl) return;
+
                 const interval = setInterval(() => {
                     const now = new Date().getTime();
                     const distance = countdownDate - now;
@@ -138,87 +162,98 @@
                         return;
                     }
 
-                    daysEl.innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-                    hoursEl.innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-                    minutesEl.innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                    secondsEl.innerText = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    if (seconds !== prevSeconds) {
+                        secondsBox.classList.add('animate-pop');
+                        setTimeout(() => secondsBox.classList.remove('animate-pop'), 400);
+                    }
+                    if (minutes !== prevMinutes) {
+                        minutesBox.classList.add('animate-pop');
+                        setTimeout(() => minutesBox.classList.remove('animate-pop'), 400);
+                    }
+                    if (hours !== prevHours) {
+                        hoursBox.classList.add('animate-pop');
+                        setTimeout(() => hoursBox.classList.remove('animate-pop'), 400);
+                    }
+                    if (days !== prevDays) {
+                        daysBox.classList.add('animate-pop');
+                        setTimeout(() => daysBox.classList.remove('animate-pop'), 400);
+                    }
+
+                    prevDays = days; prevHours = hours; prevMinutes = minutes; prevSeconds = seconds;
+                    daysEl.innerText = String(days).padStart(2, '0');
+                    hoursEl.innerText = String(hours).padStart(2, '0');
+                    minutesEl.innerText = String(minutes).padStart(2, '0');
+                    secondsEl.innerText = String(seconds).padStart(2, '0');
                 }, 1000);
             }
 
-            // --- Geometric Confetti Logic ---
+            // --- Welcome Animation Logic ---
+            if (!sessionStorage.getItem('hasVisited')) {
+                sessionStorage.setItem('hasVisited', 'true');
+                
+                flipper.classList.add('is-flipped');
+                
+                setTimeout(() => {
+                    confetti({ particleCount: 150, spread: 90, origin: { y: 0.1 } });
+                }, 200);
+
+                setTimeout(() => {
+                    flipper.classList.remove('is-flipped');
+                }, 1000);
+
+                setTimeout(startCountdown, 2500);
+
+            } else {
+                startCountdown();
+            }
+
+            // --- Background Confetti Logic ---
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
             let particles = [];
             const particleCount = 50;
             const colors = ["rgba(0,0,0,0.3)", "rgba(0,0,0,0.5)"];
 
             function Particle(x, y, size, shape, color, speed) {
-                this.x = x;
-                this.y = y;
-                this.size = size;
-                this.shape = shape;
-                this.color = color;
-                this.speed = speed;
-                this.rotation = Math.random() * 360;
+                this.x = x; this.y = y; this.size = size; this.shape = shape; this.color = color; this.speed = speed; this.rotation = Math.random() * 360;
             }
-
             Particle.prototype.draw = function() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation * Math.PI / 180);
-                ctx.fillStyle = this.color;
-                if (this.shape === 'square') {
-                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
-                } else { // line
-                    ctx.fillRect(-this.size / 2, -1, this.size, 2);
-                }
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI / 180); ctx.fillStyle = this.color;
+                if (this.shape === 'square') { ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size); } 
+                else { ctx.fillRect(-this.size / 2, -1, this.size, 2); }
                 ctx.restore();
             };
-
             Particle.prototype.update = function() {
-                this.y += this.speed;
-                this.rotation += this.speed / 2;
-                if (this.y > canvas.height) {
-                    this.y = -this.size;
-                    this.x = Math.random() * canvas.width;
-                }
+                this.y += this.speed; this.rotation += this.speed / 2;
+                if (this.y > canvas.height) { this.y = -this.size; this.x = Math.random() * canvas.width; }
             };
-
             function initParticles() {
                 for (let i = 0; i < particleCount; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
-                    const size = Math.random() * 15 + 5;
-                    const shape = Math.random() > 0.5 ? 'square' : 'line';
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    const speed = Math.random() * 1 + 0.2;
-                    particles.push(new Particle(x, y, size, shape, color, speed));
+                    const x = Math.random() * canvas.width; const y = Math.random() * canvas.height; const size = Math.random() * 15 + 5;
+                    const shape = Math.random() > 0.5 ? 'square' : 'line'; const color = colors[Math.floor(Math.random() * colors.length)];
+                    const speed = Math.random() * 1 + 0.2; particles.push(new Particle(x, y, size, shape, color, speed));
                 }
             }
-
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-                }
+                for (let i = 0; i < particles.length; i++) { particles[i].update(); particles[i].draw(); }
                 requestAnimationFrame(animate);
             }
-
             initParticles();
             animate();
-
             window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                particles = [];
-                initParticles();
+                canvas.width = window.innerWidth; canvas.height = window.innerHeight; particles = []; initParticles();
             });
         };
     </script>
 
 </body>
 </html>
+
