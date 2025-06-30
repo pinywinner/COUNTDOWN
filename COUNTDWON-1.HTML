@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>החתונה של מוטי וברוכי</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Anton for a bold, aggressive, high-impact look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+    <style>
+        /* All text uses the Anton font for maximum impact */
+        body {
+            font-family: 'Anton', sans-serif;
+            background-color: #FFFF00; /* Warning Yellow */
+            color: #000000; /* Industrial Black */
+            letter-spacing: 0.025em;
+        }
+        .brutal-shadow {
+            /* A harsher, more significant shadow */
+            box-shadow: 8px 8px 0px #000000;
+        }
+        .countdown-number {
+            font-weight: 400; /* Anton is bold by default */
+            color: #FF0000; /* Alarm Red */
+            line-height: 1;
+            /* A subtle text shadow to lift the numbers off the background */
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+        .label-text {
+             letter-spacing: 0.05em; /* Add some spacing to the labels */
+        }
+        /* Add a transition to all transformed elements for smoother interaction */
+        .transition-transform {
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen px-4 py-8 md:py-12">
+
+    <!-- 
+        ===============================================================
+        Layout using a two-column grid on medium screens and up.
+        ===============================================================
+    -->
+    <div class="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-stretch">
+        
+        <!-- Left Column (or Top on Mobile): The Photo Element -->
+        <div class="flex items-center justify-center md:justify-end">
+            <div class="w-full max-w-sm bg-white p-3 pb-12 relative border-4 border-black brutal-shadow transform rotate-3 hover:scale-105 hover:rotate-2 transition-transform">
+                <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
+            </div>
+        </div>
+
+        <!-- 
+            Right Column (or Bottom on Mobile): All Text Content 
+        -->
+        <div class="text-center flex flex-col items-center justify-between py-4">
+            <!-- 
+                Main Header
+            -->
+            <header class="mb-6 transform -rotate-2 transition-transform hover:scale-105">
+                <div class="bg-white py-3 px-4 border-8 border-black brutal-shadow">
+                    <h2 class="text-xl sm:text-2xl leading-tight">החתונה של</h2>
+                    <h1 class="text-4xl sm:text-5xl text-black my-1">מוטי & ברוכי</h1>
+                    <p class="text-md sm:text-lg mt-2 tracking-widest">בעוד:</p>
+                </div>
+            </header>
+
+            <!-- 
+                Countdown Timer Section 
+                FIX: Changed to a 2x2 grid.
+            -->
+            <main id="countdown-container" class="grid grid-cols-2 gap-4 mb-6 w-full max-w-xs">
+                <!-- Days -->
+                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-2 hover:scale-110 transition-transform">
+                    <div id="days" class="text-4xl sm:text-5xl countdown-number">00</div>
+                    <div class="text-sm sm:text-base font-bold mt-1 label-text">ימים</div>
+                </div>
+                <!-- Hours -->
+                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform -rotate-2 hover:scale-110 transition-transform">
+                    <div id="hours" class="text-4xl sm:text-5xl countdown-number">00</div>
+                    <div class="text-sm sm:text-base font-bold mt-1 label-text">שעות</div>
+                </div>
+                <!-- Minutes -->
+                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-1 hover:scale-110 transition-transform">
+                    <div id="minutes" class="text-4xl sm:text-5xl countdown-number">00</div>
+                    <div class="text-sm sm:text-base font-bold mt-1 label-text">דקות</div>
+                </div>
+                <!-- Seconds -->
+                <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform -rotate-1 hover:scale-110 transition-transform">
+                    <div id="seconds" class="text-4xl sm:text-5xl countdown-number">00</div>
+                    <div class="text-sm sm:text-base font-bold mt-1 label-text">שניות</div>
+                </div>
+            </main>
+            
+            <!-- 
+                Wedding Date Footer
+            -->
+            <footer id="footer-message" class="transform transition-transform hover:scale-105 rotate-1">
+                 <p class="text-base sm:text-lg font-bold bg-black text-white inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Use window.onload to ensure EVERYTHING is loaded
+        window.onload = function() {
+            // Set the date and time we're counting down to (the chuppah)
+            const countdownDate = new Date("2025-10-22T18:00:00").getTime();
+
+            // Get elements to update
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+            const countdownContainer = document.getElementById('countdown-container');
+            const footerMessage = document.getElementById('footer-message');
+            
+            // Defensive check: only run if all elements exist
+            if (!daysEl || !hoursEl || !minutesEl || !secondsEl || !countdownContainer) {
+                console.error("Countdown elements could not be found. Aborting.");
+                return;
+            }
+
+            // Update the countdown every 1 second
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = countdownDate - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    countdownContainer.innerHTML = `<div class="col-span-2 bg-white p-6 border-8 border-black brutal-shadow">
+                                                        <h2 class="text-4xl text-[#FF0000]">החופה החלה.</h2>
+                                                    </div>`;
+                    if (footerMessage) {
+                       footerMessage.innerHTML = '<p class="text-xl font-bold bg-black text-white inline-block p-4">מזל טוב!</p>';
+                    }
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                daysEl.innerText = String(days).padStart(2, '0');
+                hoursEl.innerText = String(hours).padStart(2, '0');
+                minutesEl.innerText = String(minutes).padStart(2, '0');
+                secondsEl.innerText = String(seconds).padStart(2, '0');
+            }, 1000);
+        };
+    </script>
+
+</body>
+</html>
