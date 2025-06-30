@@ -17,7 +17,7 @@
         /* All text uses the Anton font for maximum impact */
         body {
             font-family: 'Anton', sans-serif;
-            background-color: #FFFF00; /* Warning Yellow */
+            background-color: #F5E3FF; /* Light Purple-Pink */
             color: #000000; /* Industrial Black */
             letter-spacing: 0.025em;
         }
@@ -41,29 +41,21 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen px-4 py-8 md:py-12">
+<body class="flex items-center justify-center min-h-screen px-4 py-8">
 
     <!-- 
         ===============================================================
-        Layout using a two-column grid on medium screens and up.
+        Responsive Layout:
+        - Mobile (default): Single column, text on top (flex-col).
+        - Desktop (md and up): Two columns, image on left (md:flex-row).
+        - Order classes are used to flip the visual order on desktop.
         ===============================================================
     -->
-    <div class="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-stretch">
+    <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center">
         
-        <!-- Left Column (or Top on Mobile): The Photo Element -->
-        <div class="flex items-center justify-center md:justify-end">
-            <div class="w-full max-w-sm bg-white p-3 pb-12 relative border-4 border-black brutal-shadow transform rotate-3 hover:scale-105 hover:rotate-2 transition-transform">
-                <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
-            </div>
-        </div>
-
-        <!-- 
-            Right Column (or Bottom on Mobile): All Text Content 
-        -->
-        <div class="text-center flex flex-col items-center justify-between py-4">
-            <!-- 
-                Main Header
-            -->
+        <!-- Text Content Wrapper -->
+        <div class="text-center flex flex-col items-center justify-between order-1 md:order-2 w-full">
+            <!-- Main Header -->
             <header class="mb-6 transform -rotate-2 transition-transform hover:scale-105">
                 <div class="bg-white py-3 px-4 border-8 border-black brutal-shadow">
                     <h2 class="text-xl sm:text-2xl leading-tight">החתונה של</h2>
@@ -72,10 +64,7 @@
                 </div>
             </header>
 
-            <!-- 
-                Countdown Timer Section 
-                FIX: Changed to a 2x2 grid.
-            -->
+            <!-- Countdown Timer Section -->
             <main id="countdown-container" class="grid grid-cols-2 gap-4 mb-6 w-full max-w-xs">
                 <!-- Days -->
                 <div class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-2 hover:scale-110 transition-transform">
@@ -99,12 +88,17 @@
                 </div>
             </main>
             
-            <!-- 
-                Wedding Date Footer
-            -->
+            <!-- Wedding Date Footer -->
             <footer id="footer-message" class="transform transition-transform hover:scale-105 rotate-1">
                  <p class="text-base sm:text-lg font-bold bg-black text-white inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p>
             </footer>
+        </div>
+
+        <!-- The Photo Element Wrapper -->
+        <div class="w-full max-w-sm order-2 md:order-1">
+            <div class="bg-white p-3 pb-12 relative border-4 border-black brutal-shadow transform rotate-3 hover:scale-105 hover:rotate-2 transition-transform">
+                <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
+            </div>
         </div>
     </div>
 
