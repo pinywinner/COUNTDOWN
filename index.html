@@ -195,6 +195,10 @@
         window.onload = function() {
             // Get the header flipper element
             const flipper = document.getElementById('header-flipper');
+            // Get the confetti canvas element
+            const confettiCanvas = document.getElementById('confetti-canvas');
+            // Create a confetti instance bound to the specific canvas
+            const myConfetti = confetti.create(confettiCanvas, { resize: true });
 
             /**
              * Starts the countdown timer.
@@ -286,7 +290,8 @@
                 
                 // Trigger confetti shortly after the flip starts
                 setTimeout(() => {
-                    confetti({ particleCount: 150, spread: 90, origin: { y: 0.1 } });
+                    // Call the confetti instance created earlier
+                    myConfetti({ particleCount: 150, spread: 90, origin: { y: 0.1 } });
                 }, 200);
 
                 // Flip the header back after a delay
@@ -303,20 +308,19 @@
             }
 
             // --- Background Confetti Logic (Canvas Animation) ---
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; // Set canvas width to window width
-            canvas.height = window.innerHeight; // Set canvas height to window height
+            const ctx = confettiCanvas.getContext('2d'); // Use confettiCanvas instead of canvas
+            confettiCanvas.width = window.innerWidth; // Set canvas width to window width
+            confettiCanvas.height = window.innerHeight; // Set canvas height to window height
             let particles = []; // Array to hold confetti particles
-            const particleCount = 50; // Number of background particles
-            const colors = ["rgba(0,0,0,0.3)", "rgba(0,0,0,0.5)"]; // Colors for background particles
+            const particleCount = 70; // Increased particle count for more density
+            const colors = ["rgba(0,0,0,0.3)", "rgba(0,0,0,0.5)", "#FFD700", "#FF69B4", "#8A2BE2"]; // Added more colors
 
             /**
              * Particle constructor function.
              * @param {number} x - Initial X coordinate.
              * @param {number} y - Initial Y coordinate.
              * @param {number} size - Size of the particle.
-             * @param {string} shape - Shape of the particle ('square' or 'line').
+             * @param {string} shape - Type of the particle ('square', 'line', 'circle', 'triangle', 'hexagon', 'star', 'diamond').
              * @param {string} color - Color of the particle.
              * @param {number} speed - Vertical speed of the particle.
              */
@@ -327,21 +331,71 @@
                 this.shape = shape;
                 this.color = color;
                 this.speed = speed;
-                this.rotation = Math.random() * 360; // Initial random rotation
+                this.rotation = Math.random() * 360; // Initial random rotation in degrees
             }
 
             /**
-             * Draws the particle on the canvas.
+             * Draws the particle on the canvas based on its shape.
              */
             Particle.prototype.draw = function() {
                 ctx.save(); // Save current canvas state
                 ctx.translate(this.x, this.y); // Move origin to particle's position
-                ctx.rotate(this.rotation * Math.PI / 180); // Rotate the particle
+                ctx.rotate(this.rotation * Math.PI / 180); // Rotate the particle (convert degrees to radians)
                 ctx.fillStyle = this.color; // Set fill color
-                if (this.shape === 'square') {
-                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size); // Draw square
-                } else {
-                    ctx.fillRect(-this.size / 2, -1, this.size, 2); // Draw line (rectangle)
+                
+                switch (this.shape) {
+                    case 'square':
+                        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                        break;
+                    case 'line':
+                        ctx.fillRect(-this.size / 2, -1, this.size, 2);
+                        break;
+                    case 'circle':
+                        ctx.beginPath();
+                        ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                    case 'triangle':
+                        ctx.beginPath();
+                        ctx.moveTo(0, -this.size / 2);
+                        ctx.lineTo(this.size / 2, this.size / 2);
+                        ctx.lineTo(-this.size / 2, this.size / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                    case 'hexagon':
+                        ctx.beginPath();
+                        for (let i = 0; i < 6; i++) {
+                            const angle = (Math.PI / 3) * i;
+                            ctx.lineTo(this.size / 2 * Math.cos(angle), this.size / 2 * Math.sin(angle));
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                    case 'star':
+                        // Draw a 5-pointed star
+                        ctx.beginPath();
+                        const outerRadius = this.size / 2;
+                        const innerRadius = outerRadius / 2.5; // Adjust for star pointiness
+                        let angle = Math.PI / 2; // Start from top point
+                        for (let i = 0; i < 5; i++) {
+                            ctx.lineTo(outerRadius * Math.cos(angle), outerRadius * Math.sin(angle));
+                            angle += Math.PI / 5; // Move to inner point
+                            ctx.lineTo(innerRadius * Math.cos(angle), innerRadius * Math.sin(angle));
+                            angle += Math.PI / 5; // Move to next outer point
+                        }
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                    case 'diamond':
+                        ctx.beginPath();
+                        ctx.moveTo(0, -this.size / 2); // Top point
+                        ctx.lineTo(this.size / 2, 0);   // Right point
+                        ctx.lineTo(0, this.size / 2);    // Bottom point
+                        ctx.lineTo(-this.size / 2, 0);  // Left point
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
                 }
                 ctx.restore(); // Restore canvas state
             };
@@ -353,9 +407,9 @@
             Particle.prototype.update = function() {
                 this.y += this.speed; // Move particle downwards
                 this.rotation += this.speed / 2; // Rotate particle
-                if (this.y > canvas.height) { // If particle goes off bottom of screen
+                if (this.y > confettiCanvas.height) { // If particle goes off bottom of screen
                     this.y = -this.size; // Reset to top
-                    this.x = Math.random() * canvas.width; // Random new X position
+                    this.x = Math.random() * confettiCanvas.width; // Random new X position
                 }
             };
 
@@ -364,12 +418,13 @@
              */
             function initParticles() {
                 particles = []; // Clear existing particles
+                const shapes = ['square', 'line', 'circle', 'triangle', 'hexagon', 'star', 'diamond']; // Added 'star' and 'diamond'
                 for (let i = 0; i < particleCount; i++) {
-                    const x = Math.random() * canvas.width;
-                    const y = Math.random() * canvas.height;
+                    const x = Math.random() * confettiCanvas.width;
+                    const y = Math.random() * confettiCanvas.height;
                     const size = Math.random() * 15 + 5;
-                    const shape = Math.random() > 0.5 ? 'square' : 'line';
-                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const shape = shapes[Math.floor(Math.random() * shapes.length)]; // Randomly pick a shape
+                    const color = colors[Math.floor(Math.random() * colors.length)]; // Randomly pick a color
                     const speed = Math.random() * 1 + 0.2;
                     particles.push(new Particle(x, y, size, shape, color, speed));
                 }
@@ -380,7 +435,7 @@
              * Clears canvas, updates and draws each particle.
              */
             function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas
+                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); // Clear the entire canvas
                 for (let i = 0; i < particles.length; i++) {
                     particles[i].update(); // Update particle position
                     particles[i].draw(); // Draw particle
@@ -394,8 +449,9 @@
 
             // Handle window resizing to adjust canvas and reinitialize particles
             window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+                particles = []; // Clear current particles
                 initParticles(); // Reinitialize particles for new canvas size
             });
         };
