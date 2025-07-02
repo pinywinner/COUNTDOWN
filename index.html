@@ -425,7 +425,7 @@
                     const size = Math.random() * 15 + 5;
                     const shape = shapes[Math.floor(Math.random() * shapes.length)]; // Randomly pick a shape
                     const color = colors[Math.floor(Math.random() * colors.length)]; // Randomly pick a color
-                    const speed = Math.random() * 1 + 0.2;
+                    const speed = Math.random() * 0.5 + 0.1; // Reduced speed range for slower fall
                     particles.push(new Particle(x, y, size, shape, color, speed));
                 }
             }
