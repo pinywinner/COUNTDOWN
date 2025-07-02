@@ -177,14 +177,14 @@
             
             <!-- Footer message with date and time -->
             <footer id="footer-message" class="transform transition-transform hover:scale-105 rotate-1">
-                   <p class="text-base sm:text-lg font-bold bg-black text-white inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p>
+                   <p class="text-base sm:text-lg font-bold bg-black text-yellow-400 inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p> <!-- Changed text-white to text-yellow-400 -->
             </footer>
         </div>
 
         <!-- Left section (on desktop) for the image -->
         <!-- Reverted order classes to place image on left on desktop -->
         <div class="w-full max-w-sm order-2 md:order-1">
-            <div class="bg-white p-3 pb-12 relative border-8 border-black brutal-shadow transform rotate-3 hover:scale-105 hover:rotate-2 transition-transform">
+            <div class="bg-white p-3 pb-12 relative border-8 border-black brutal-shadow transform -rotate-3 hover:scale-105 hover:rotate-2 transition-transform"> <!-- Changed rotate-3 to -rotate-3 -->
                 <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
             </div>
         </div>
@@ -237,7 +237,7 @@
                         // Update the countdown container to show "The Chuppah has begun."
                         countdownContainer.innerHTML = `<div class="col-span-2 bg-white p-6 border-8 border-black brutal-shadow"><h2 class="text-4xl text-[#FF0000]">החופה החלה.</h2></div>`;
                         // Update the footer message to "Mazal Tov!"
-                        if (footerMessage) footerMessage.innerHTML = '<p class="text-xl font-bold bg-black text-white inline-block p-4">מזל טוב!</p>';
+                        if (footerMessage) footerMessage.innerHTML = '<p class="text-xl font-bold bg-black text-yellow-400 inline-block p-4">מזל טוב!</p>'; // Changed text-white to text-yellow-400
                         return; // Exit the function
                     }
 
