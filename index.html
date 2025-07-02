@@ -27,8 +27,8 @@
         /* Base body styles for font, background, and text color */
         body {
             font-family: 'Anton', sans-serif;
-            background-color: #F5E3FF; /* Light purple background */
-            color: #000000; /* Black text */
+            background-color: '#F5E3FF'; /* Light purple background */
+            color: '#000000'; /* Black text */
             letter-spacing: 0.025em; /* Slight letter spacing for readability */
             /* Background pattern for visual interest */
             background-image: linear-gradient(45deg, rgba(0,0,0,0.04) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.04) 50%, rgba(0,0,0,0.04) 75%, transparent 75%, transparent);
@@ -43,7 +43,7 @@
         /* Styling for the countdown numbers */
         .countdown-number {
             font-weight: 400;
-            color: #FF0000; /* Red color for numbers */
+            color: '#FF0000'; /* Red color for numbers */
             line-height: 1;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.2); /* Subtle text shadow for depth and readability */
         }
@@ -126,8 +126,17 @@
     <!-- Main container for the content, responsive layout -->
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center">
         
+        <!-- Left section (on desktop) for the image -->
+        <!-- Changed order: now order-1 on mobile, order-2 on desktop -->
+        <div class="w-full max-w-sm order-1 md:order-2">
+            <div class="bg-white p-3 pb-12 relative border-8 border-black brutal-shadow transform -rotate-3 hover:scale-105 hover:rotate-2 transition-transform"> <!-- Changed rotate-3 to -rotate-3 -->
+                <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
+            </div>
+        </div>
+
         <!-- Right section (on desktop) for header and countdown -->
-        <div class="text-center flex flex-col items-center justify-between order-1 md:order-2 w-full">
+        <!-- Changed order: now order-2 on mobile, order-1 on desktop -->
+        <div class="text-center flex flex-col items-center justify-between order-2 md:order-1 w-full">
             <!-- HEADER FLIPPER WRAPPER -->
             <div class="header-wrapper mb-6 transform -rotate-2 hover:scale-105">
                 <div id="header-flipper" class="header-flipper">
@@ -151,7 +160,7 @@
             </div>
 
             <!-- Countdown Timer Display -->
-            <main id="countdown-container" class="grid grid-cols-2 gap-8 mb-6 w-full"> <!-- Changed gap-4 to gap-8 -->
+            <main id="countdown-container" class="grid grid-cols-2 gap-8 mb-6 w-full">
                 <!-- Days box -->
                 <div id="days-box" class="bg-white rounded-none p-3 border-8 border-black brutal-shadow transform rotate-2 hover:scale-110 transition-transform">
                     <div id="days" class="text-4xl sm:text-5xl countdown-number">00</div>
@@ -178,13 +187,6 @@
             <footer id="footer-message" class="transform transition-transform hover:scale-105 rotate-1">
                    <p class="text-base sm:text-lg font-bold bg-black text-white inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p>
             </footer>
-        </div>
-
-        <!-- Left section (on desktop) for the image -->
-        <div class="w-full max-w-sm order-2 md:order-1">
-            <div class="bg-white p-3 pb-12 relative border-8 border-black brutal-shadow transform rotate-3 hover:scale-105 hover:rotate-2 transition-transform">
-                <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
-            </div>
         </div>
     </div>
 
