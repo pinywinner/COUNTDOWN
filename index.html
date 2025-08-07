@@ -23,100 +23,8 @@
     <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-    <style>
-        /* Base body styles for font, background, and text color */
-        body {
-            font-family: 'Anton', sans-serif;
-            background-color: #DDAAFF; /* Changed to a darker purple */
-            color: #000000; /* Black text */
-            letter-spacing: 0.025em; /* Slight letter spacing for readability */
-            /* Background pattern for visual interest */
-            background-image: linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.06) 75%, transparent 75%, transparent); /* Adjusted rgba for darker background */
-            background-size: 30px 30px; /* Size of the background pattern */
-        }
-
-        /* Custom brutalist shadow effect */
-        .brutal-shadow {
-            box-shadow: 8px 8px 0px #000000; /* Offset shadow for brutalist look */
-        }
-
-        /* Styling for the countdown numbers */
-        .countdown-number {
-            font-weight: 400;
-            color: #FF0000; /* Red color for numbers */
-            line-height: 1;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.2); /* Subtle text shadow for depth and readability */
-        }
-
-        /* Styling for the labels below countdown numbers */
-        .label-text {
-            letter-spacing: 0.05em; /* More letter spacing for labels */
-        }
-
-        /* Smooth transition for transform properties on hover */
-        .transition-transform {
-            transition: transform 0.2s ease-in-out;
-        }
-
-        /* Full-screen canvas for background confetti, non-interactive */
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1; /* Behind other content */
-            pointer-events: none; /* Allows clicks to pass through */
-        }
-
-        /* Keyframe animation for the 'pop' effect on number updates */
-        @keyframes pop {
-            50% { transform: scale(1.2); } /* Scales up to 120% at midpoint */
-        }
-        .animate-pop {
-            animation: pop 0.4s ease-in-out; /* Applies the pop animation */
-        }
-
-        /* === STABILIZED FLIP ANIMATION STYLES FOR HEADER === */
-        /* Wrapper to create a 3D perspective for the flip effect */
-        .header-wrapper {
-            perspective: 1000px; /* Defines the 3D space */
-            min-height: 150px; /* Ensures consistent height during flip to prevent layout shift */
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* The element that actually flips */
-        .header-flipper {
-            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Custom easing for a bouncy flip */
-            transform-style: preserve-3d; /* Ensures children participate in 3D transformations */
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        /* Class applied to trigger the flip */
-        .header-flipper.is-flipped {
-            transform: rotateY(180deg); /* Rotates 180 degrees around the Y-axis */
-        }
-        /* Styles for both front and back faces of the flipper */
-        .header-front, .header-back {
-            -webkit-backface-visibility: hidden; /* Hides the back of the element when facing away */
-            backface-visibility: hidden; /* Standard property for hiding back face */
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        /* Styles for the back face, initially rotated to be hidden */
-        .header-back {
-            transform: rotateY(180deg); /* Rotated to show when flipper is flipped */
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="flex items-center justify-center min-h-screen px-4 py-8 md:py-12">
 
@@ -125,7 +33,7 @@
 
     <!-- Main container for the content, responsive layout -->
     <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 items-center">
-        
+
         <!-- Right section (on desktop) for header and countdown -->
         <!-- Reverted order classes to place countdown on right on desktop -->
         <div class="text-center flex flex-col items-center justify-between order-1 md:order-2 w-full">
@@ -174,7 +82,7 @@
                     <div class="text-sm sm:text-base font-bold mt-1 label-text">שניות</div>
                 </div>
             </main>
-            
+
             <!-- Footer message with date and time -->
             <footer id="footer-message" class="transform transition-transform hover:scale-105 rotate-1">
                    <p class="text-base sm:text-lg font-bold bg-black text-yellow-400 inline-block py-2 px-4">22.10.2025 | ל' תשרי תשפ"ו | 18:00</p> <!-- Changed text-white to text-yellow-400 -->
@@ -185,277 +93,19 @@
         <!-- Reverted order classes to place image on left on desktop -->
         <div class="w-full max-w-sm order-2 md:order-1">
             <div class="bg-white p-3 pb-12 relative border-8 border-black brutal-shadow transform -rotate-3 hover:scale-105 hover:rotate-2 transition-transform"> <!-- Changed rotate-3 to -rotate-3 -->
-                <img src="https://i.ibb.co/Y4DsmyPf/IMG-8991-2.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
+                <img src="preview.jpg" alt="Moti and Bruchi" class="w-full h-auto" onerror="this.onerror=null; this.src='https://placehold.co/400x500/000/fff?text=Photo';">
             </div>
         </div>
     </div>
 
-    <script>
-        // Ensure the script runs after the entire page is loaded
-        window.onload = function() {
-            // Get the header flipper element
-            const flipper = document.getElementById('header-flipper');
-            // Get the confetti canvas element
-            const confettiCanvas = document.getElementById('confetti-canvas');
-            // Create a confetti instance bound to the specific canvas
-            const myConfetti = confetti.create(confettiCanvas, { resize: true });
+    <audio id="wedding-song" loop>
+        <source src="יוצאי להקת שפתיים  שיר החתונה(MP3_160K).mp3" type="audio/mpeg">
+    </audio>
+    <button id="play-pause-button" class="fixed bottom-4 right-4 bg-white border-4 border-black brutal-shadow p-2 w-16 h-16 rounded-full flex items-center justify-center text-3xl">
+        ▶️
+    </button>
 
-            /**
-             * Starts the countdown timer.
-             * Calculates and updates the time remaining until the wedding date.
-             */
-            function startCountdown() {
-                // Set the target wedding date and time (October 22, 2025, 6:00 PM)
-                const countdownDate = new Date("2025-10-22T18:00:00").getTime();
-                
-                // Get references to countdown display elements
-                const daysEl = document.getElementById('days');
-                const hoursEl = document.getElementById('hours');
-                const minutesEl = document.getElementById('minutes');
-                const secondsEl = document.getElementById('seconds');
-                
-                // Get references to the countdown number boxes for animation
-                const daysBox = document.getElementById('days-box');
-                const hoursBox = document.getElementById('hours-box');
-                const minutesBox = document.getElementById('minutes-box');
-                const secondsBox = document.getElementById('seconds-box');
-                
-                // Get references to the main countdown container and footer message
-                const countdownContainer = document.getElementById('countdown-container');
-                const footerMessage = document.getElementById('footer-message');
-                
-                // Variables to store previous time values for animation triggering
-                let prevDays, prevHours, prevMinutes, prevSeconds;
-
-                // Exit if countdown elements are not found
-                if (!daysEl) return;
-
-                // Set up an interval to update the countdown every second
-                const interval = setInterval(() => {
-                    const now = new Date().getTime(); // Get current time
-                    const distance = countdownDate - now; // Calculate distance to target date
-
-                    // If the countdown is finished (distance is negative)
-                    if (distance < 0) {
-                        clearInterval(interval); // Stop the interval
-                        // Update the countdown container to show "The Chuppah has begun."
-                        countdownContainer.innerHTML = `<div class="col-span-2 bg-white p-6 border-8 border-black brutal-shadow"><h2 class="text-4xl text-[#FF0000]">החופה החלה.</h2></div>`;
-                        // Update the footer message to "Mazal Tov!"
-                        if (footerMessage) footerMessage.innerHTML = '<p class="text-xl font-bold bg-black text-yellow-400 inline-block p-4">מזל טוב!</p>'; // Changed text-white to text-yellow-400
-                        return; // Exit the function
-                    }
-
-                    // Calculate days, hours, minutes, and seconds remaining
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    // Apply 'pop' animation if the value changes
-                    if (seconds !== prevSeconds) {
-                        secondsBox.classList.add('animate-pop');
-                        setTimeout(() => secondsBox.classList.remove('animate-pop'), 400); // Remove class after animation
-                    }
-                    if (minutes !== prevMinutes) {
-                        minutesBox.classList.add('animate-pop');
-                        setTimeout(() => minutesBox.classList.remove('animate-pop'), 400);
-                    }
-                    if (hours !== prevHours) {
-                        hoursBox.classList.add('animate-pop');
-                        setTimeout(() => hoursBox.classList.remove('animate-pop'), 400);
-                    }
-                    if (days !== prevDays) {
-                        daysBox.classList.add('animate-pop');
-                        setTimeout(() => daysBox.classList.remove('animate-pop'), 400);
-                    }
-
-                    // Store current values for the next comparison
-                    prevDays = days; prevHours = hours; prevMinutes = minutes; prevSeconds = seconds;
-                    
-                    // Update the display with padded numbers (e.g., 05 instead of 5)
-                    daysEl.innerText = String(days).padStart(2, '0');
-                    hoursEl.innerText = String(hours).padStart(2, '0');
-                    minutesEl.innerText = String(minutes).padStart(2, '0');
-                    secondsEl.innerText = String(seconds).padStart(2, '0');
-                }, 1000); // Update every 1 second
-            }
-
-            // --- Welcome Animation Logic ---
-            // Check if the user has visited before using sessionStorage
-            if (!sessionStorage.getItem('hasVisited')) {
-                sessionStorage.setItem('hasVisited', 'true'); // Mark as visited
-                
-                // Flip the header to show the welcome message
-                flipper.classList.add('is-flipped');
-                
-                // Trigger confetti shortly after the flip starts
-                setTimeout(() => {
-                    // Call the confetti instance created earlier
-                    myConfetti({ particleCount: 150, spread: 90, origin: { y: 0.1 } });
-                }, 200);
-
-                // Flip the header back after a delay
-                setTimeout(() => {
-                    flipper.classList.remove('is-flipped');
-                }, 1000);
-
-                // Start the countdown after the welcome animation finishes
-                setTimeout(startCountdown, 2500);
-
-            } else {
-                // If already visited, start countdown immediately
-                startCountdown();
-            }
-
-            // --- Background Confetti Logic (Canvas Animation) ---
-            const ctx = confettiCanvas.getContext('2d'); // Use confettiCanvas instead of canvas
-            confettiCanvas.width = window.innerWidth; // Set canvas width to window width
-            confettiCanvas.height = window.innerHeight; // Set canvas height to window height
-            let particles = []; // Array to hold confetti particles
-            const particleCount = 70; // Increased particle count for more density
-            const colors = ["rgba(0,0,0,0.3)", "rgba(0,0,0,0.5)", "#FFD700", "#FF69B4", "#8A2BE2"]; // Added more colors
-
-            /**
-             * Particle constructor function.
-             * @param {number} x - Initial X coordinate.
-             * @param {number} y - Initial Y coordinate.
-             * @param {number} size - Size of the particle.
-             * @param {string} shape - Type of the particle ('square', 'line', 'circle', 'triangle', 'hexagon', 'star', 'diamond').
-             * @param {string} color - Color of the particle.
-             * @param {number} speed - Vertical speed of the particle.
-             */
-            function Particle(x, y, size, shape, color, speed) {
-                this.x = x;
-                this.y = y;
-                this.size = size;
-                this.shape = shape;
-                this.color = color;
-                this.speed = speed;
-                this.rotation = Math.random() * 360; // Initial random rotation in degrees
-            }
-
-            /**
-             * Draws the particle on the canvas based on its shape.
-             */
-            Particle.prototype.draw = function() {
-                ctx.save(); // Save current canvas state
-                ctx.translate(this.x, this.y); // Move origin to particle's position
-                ctx.rotate(this.rotation * Math.PI / 180); // Rotate the particle (convert degrees to radians)
-                ctx.fillStyle = this.color; // Set fill color
-                
-                switch (this.shape) {
-                    case 'square':
-                        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
-                        break;
-                    case 'line':
-                        ctx.fillRect(-this.size / 2, -1, this.size, 2);
-                        break;
-                    case 'circle':
-                        ctx.beginPath();
-                        ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
-                        ctx.fill();
-                        break;
-                    case 'triangle':
-                        ctx.beginPath();
-                        ctx.moveTo(0, -this.size / 2);
-                        ctx.lineTo(this.size / 2, this.size / 2);
-                        ctx.lineTo(-this.size / 2, this.size / 2);
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                    case 'hexagon':
-                        ctx.beginPath();
-                        for (let i = 0; i < 6; i++) {
-                            const angle = (Math.PI / 3) * i;
-                            ctx.lineTo(this.size / 2 * Math.cos(angle), this.size / 2 * Math.sin(angle));
-                        }
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                    case 'star':
-                        // Draw a 5-pointed star
-                        ctx.beginPath();
-                        const outerRadius = this.size / 2;
-                        const innerRadius = outerRadius / 2.5; // Adjust for star pointiness
-                        let angle = Math.PI / 2; // Start from top point
-                        for (let i = 0; i < 5; i++) {
-                            ctx.lineTo(outerRadius * Math.cos(angle), outerRadius * Math.sin(angle));
-                            angle += Math.PI / 5; // Move to inner point
-                            ctx.lineTo(innerRadius * Math.cos(angle), innerRadius * Math.sin(angle));
-                            angle += Math.PI / 5; // Move to next outer point
-                        }
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                    case 'diamond':
-                        ctx.beginPath();
-                        ctx.moveTo(0, -this.size / 2); // Top point
-                        ctx.lineTo(this.size / 2, 0);   // Right point
-                        ctx.lineTo(0, this.size / 2);    // Bottom point
-                        ctx.lineTo(-this.size / 2, 0);  // Left point
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                }
-                ctx.restore(); // Restore canvas state
-            };
-
-            /**
-             * Updates the particle's position and rotation.
-             * Resets particle to top if it goes off screen.
-             */
-            Particle.prototype.update = function() {
-                this.y += this.speed; // Move particle downwards
-                this.rotation += this.speed / 2; // Rotate particle
-                if (this.y > confettiCanvas.height) { // If particle goes off bottom of screen
-                    this.y = -this.size; // Reset to top
-                    this.x = Math.random() * confettiCanvas.width; // Random new X position
-                }
-            };
-
-            /**
-             * Initializes the array of background confetti particles.
-             */
-            function initParticles() {
-                particles = []; // Clear existing particles
-                const shapes = ['square', 'line', 'circle', 'triangle', 'hexagon', 'star', 'diamond']; // Added 'star' and 'diamond'
-                for (let i = 0; i < particleCount; i++) {
-                    const x = Math.random() * confettiCanvas.width;
-                    const y = Math.random() * confettiCanvas.height;
-                    const size = Math.random() * 15 + 5;
-                    const shape = shapes[Math.floor(Math.random() * shapes.length)]; // Randomly pick a shape
-                    const color = colors[Math.floor(Math.random() * colors.length)]; // Randomly pick a color
-                    const speed = Math.random() * 0.5 + 0.1; // Reduced speed range for slower fall
-                    particles.push(new Particle(x, y, size, shape, color, speed));
-                }
-            }
-
-            /**
-             * Animation loop for the background confetti.
-             * Clears canvas, updates and draws each particle.
-             */
-            function animate() {
-                ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); // Clear the entire canvas
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update(); // Update particle position
-                    particles[i].draw(); // Draw particle
-                }
-                requestAnimationFrame(animate); // Request next animation frame
-            }
-
-            // Initialize and start the background confetti animation
-            initParticles();
-            animate();
-
-            // Handle window resizing to adjust canvas and reinitialize particles
-            window.addEventListener('resize', () => {
-                confettiCanvas.width = window.innerWidth;
-                confettiCanvas.height = window.innerHeight;
-                particles = []; // Clear current particles
-                initParticles(); // Reinitialize particles for new canvas size
-            });
-        };
-    </script>
+    <script src="script.js"></script>
 
 </body>
 </html>

@@ -1,0 +1,97 @@
+/* Base body styles for font, background, and text color */
+body {
+    font-family: 'Anton', sans-serif;
+    background-color: #DDAAFF; /* Changed to a darker purple */
+    color: #000000; /* Black text */
+    letter-spacing: 0.025em; /* Slight letter spacing for readability */
+    /* Background pattern for visual interest */
+    background-image: linear-gradient(45deg, rgba(0,0,0,0.06) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.06) 75%, transparent 75%, transparent); /* Adjusted rgba for darker background */
+    background-size: 30px 30px; /* Size of the background pattern */
+}
+
+/* Custom brutalist shadow effect */
+.brutal-shadow {
+    box-shadow: 8px 8px 0px #000000; /* Offset shadow for brutalist look */
+}
+
+/* Styling for the countdown numbers */
+.countdown-number {
+    font-weight: 400;
+    color: #FF0000; /* Red color for numbers */
+    line-height: 1;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.2); /* Subtle text shadow for depth and readability */
+}
+
+/* Styling for the labels below countdown numbers */
+.label-text {
+    letter-spacing: 0.05em; /* More letter spacing for labels */
+}
+
+/* Smooth transition for transform properties on hover */
+.transition-transform {
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Full-screen canvas for background confetti, non-interactive */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Behind other content */
+    pointer-events: none; /* Allows clicks to pass through */
+}
+
+/* Keyframe animation for the 'pop' effect on number updates */
+@keyframes pop {
+    50% { transform: scale(1.2); } /* Scales up to 120% at midpoint */
+}
+.animate-pop {
+    animation: pop 0.4s ease-in-out; /* Applies the pop animation */
+}
+
+/* === STABILIZED FLIP ANIMATION STYLES FOR HEADER === */
+/* Wrapper to create a 3D perspective for the flip effect */
+.header-wrapper {
+    perspective: 1000px; /* Defines the 3D space */
+    min-height: 150px; /* Ensures consistent height during flip to prevent layout shift */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* The element that actually flips */
+.header-flipper {
+    transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Custom easing for a bouncy flip */
+    transform-style: preserve-3d; /* Ensures children participate in 3D transformations */
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+/* Class applied to trigger the flip */
+.header-flipper.is-flipped {
+    transform: rotateY(180deg); /* Rotates 180 degrees around the Y-axis */
+}
+/* Styles for both front and back faces of the flipper */
+.header-front, .header-back {
+    -webkit-backface-visibility: hidden; /* Hides the back of the element when facing away */
+    backface-visibility: hidden; /* Standard property for hiding back face */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Styles for the back face, initially rotated to be hidden */
+.header-back {
+    transform: rotateY(180deg); /* Rotated to show when flipper is flipped */
+}
+
+#play-pause-button {
+    z-index: 10;
+    cursor: pointer;
+}
